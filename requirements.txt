@@ -1,0 +1,11 @@
+tensorflow
+numpy
+pandas
+scipy
+opencv-python
+scikit-image
+matplotlib
+seaborn
+pydicom
+albumentations
+tf-keras-vis
