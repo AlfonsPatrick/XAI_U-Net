@@ -1,0 +1,398 @@
+{
+  "project": "XAI U-Net: Explainable Lung Nodule Segmentation",
+  "description": "Interactive demo of Attention U-Net with Integrated Gradients for lung nodule segmentation on LIDC-IDRI CT scans.",
+  "dataset": "LIDC-IDRI",
+  "model": "Attention U-Net",
+  "xai_method": "Integrated Gradients",
+  "image_size": [
+    512,
+    512
+  ],
+  "num_patients_trained": 100,
+  "ig_steps": 50,
+  "segmentation_threshold": 0.4,
+  "total_samples": 10,
+  "aggregate_metrics": {
+    "mean_dice": 0.4807,
+    "mean_iou": 0.4171,
+    "std_dice": 0.4124,
+    "std_iou": 0.3733
+  },
+  "class_distribution": {
+    "Normal": 4,
+    "Benign": 3,
+    "Malignant": 3
+  },
+  "samples": [
+    {
+      "id": 0,
+      "original_index": 0,
+      "patient_id": "223",
+      "slice_idx": 162,
+      "class_label": 1,
+      "class_name": "Benign",
+      "malignancy_score": 3,
+      "has_nodule": true,
+      "metrics": {
+        "dice": 0.838,
+        "iou": 0.7212,
+        "precision": 0.7212,
+        "recall": 1.0,
+        "gt_area": 75,
+        "pred_area": 104,
+        "intersection": 75,
+        "max_confidence": 1.0,
+        "mean_confidence": 0.000396
+      },
+      "has_ig": true,
+      "ig_stats": {
+        "ig_min": -3.476e-05,
+        "ig_max": 2.556e-05,
+        "ig_mean": 0.0,
+        "ig_std": 2.4e-07
+      },
+      "images": {
+        "ct": "images/sample_00/ct.png",
+        "prediction": "images/sample_00/prediction.png",
+        "pred_overlay": "images/sample_00/pred_overlay.png",
+        "gt_overlay": "images/sample_00/gt_overlay.png",
+        "ig_heatmap": "images/sample_00/ig_heatmap.png",
+        "ig_overlay": "images/sample_00/ig_overlay.png",
+        "ig_overlay_zoomed": "images/sample_00/ig_overlay_zoomed.png"
+      }
+    },
+    {
+      "id": 1,
+      "original_index": 1,
+      "patient_id": "287",
+      "slice_idx": 99,
+      "class_label": 0,
+      "class_name": "Normal",
+      "malignancy_score": 0,
+      "has_nodule": false,
+      "metrics": {
+        "dice": 0.0,
+        "iou": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "gt_area": 0,
+        "pred_area": 0,
+        "intersection": 0,
+        "max_confidence": 0.0,
+        "mean_confidence": 0.0
+      },
+      "has_ig": true,
+      "ig_stats": {
+        "ig_min": -7.31e-06,
+        "ig_max": 1.3e-05,
+        "ig_mean": -0.0,
+        "ig_std": 1.4e-07
+      },
+      "images": {
+        "ct": "images/sample_01/ct.png",
+        "prediction": "images/sample_01/prediction.png",
+        "pred_overlay": "images/sample_01/pred_overlay.png",
+        "gt_overlay": "images/sample_01/gt_overlay.png",
+        "ig_heatmap": "images/sample_01/ig_heatmap.png",
+        "ig_overlay": "images/sample_01/ig_overlay.png",
+        "ig_overlay_zoomed": "images/sample_01/ig_overlay.png"
+      }
+    },
+    {
+      "id": 2,
+      "original_index": 2,
+      "patient_id": "587",
+      "slice_idx": 50,
+      "class_label": 1,
+      "class_name": "Benign",
+      "malignancy_score": 3,
+      "has_nodule": true,
+      "metrics": {
+        "dice": 0.7624,
+        "iou": 0.616,
+        "precision": 0.7404,
+        "recall": 0.7857,
+        "gt_area": 98,
+        "pred_area": 104,
+        "intersection": 77,
+        "max_confidence": 1.0,
+        "mean_confidence": 0.000391
+      },
+      "has_ig": true,
+      "ig_stats": {
+        "ig_min": -2.281e-05,
+        "ig_max": 2.991e-05,
+        "ig_mean": 0.0,
+        "ig_std": 5.5e-07
+      },
+      "images": {
+        "ct": "images/sample_02/ct.png",
+        "prediction": "images/sample_02/prediction.png",
+        "pred_overlay": "images/sample_02/pred_overlay.png",
+        "gt_overlay": "images/sample_02/gt_overlay.png",
+        "ig_heatmap": "images/sample_02/ig_heatmap.png",
+        "ig_overlay": "images/sample_02/ig_overlay.png",
+        "ig_overlay_zoomed": "images/sample_02/ig_overlay_zoomed.png"
+      }
+    },
+    {
+      "id": 3,
+      "original_index": 3,
+      "patient_id": "278",
+      "slice_idx": 134,
+      "class_label": 1,
+      "class_name": "Benign",
+      "malignancy_score": 3,
+      "has_nodule": true,
+      "metrics": {
+        "dice": 0.4583,
+        "iou": 0.2973,
+        "precision": 1.0,
+        "recall": 0.2973,
+        "gt_area": 37,
+        "pred_area": 11,
+        "intersection": 11,
+        "max_confidence": 0.9994,
+        "mean_confidence": 3.8e-05
+      },
+      "has_ig": true,
+      "ig_stats": {
+        "ig_min": -7.32e-06,
+        "ig_max": 7.82e-06,
+        "ig_mean": 0.0,
+        "ig_std": 5e-08
+      },
+      "images": {
+        "ct": "images/sample_03/ct.png",
+        "prediction": "images/sample_03/prediction.png",
+        "pred_overlay": "images/sample_03/pred_overlay.png",
+        "gt_overlay": "images/sample_03/gt_overlay.png",
+        "ig_heatmap": "images/sample_03/ig_heatmap.png",
+        "ig_overlay": "images/sample_03/ig_overlay.png",
+        "ig_overlay_zoomed": "images/sample_03/ig_overlay_zoomed.png"
+      }
+    },
+    {
+      "id": 4,
+      "original_index": 4,
+      "patient_id": "287",
+      "slice_idx": 54,
+      "class_label": 0,
+      "class_name": "Normal",
+      "malignancy_score": 0,
+      "has_nodule": false,
+      "metrics": {
+        "dice": 0.0,
+        "iou": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "gt_area": 0,
+        "pred_area": 0,
+        "intersection": 0,
+        "max_confidence": 0.0,
+        "mean_confidence": 0.0
+      },
+      "has_ig": true,
+      "ig_stats": {
+        "ig_min": -0.0,
+        "ig_max": 0.0,
+        "ig_mean": 0.0,
+        "ig_std": 0.0
+      },
+      "images": {
+        "ct": "images/sample_04/ct.png",
+        "prediction": "images/sample_04/prediction.png",
+        "pred_overlay": "images/sample_04/pred_overlay.png",
+        "gt_overlay": "images/sample_04/gt_overlay.png",
+        "ig_heatmap": "images/sample_04/ig_heatmap.png",
+        "ig_overlay": "images/sample_04/ig_overlay.png",
+        "ig_overlay_zoomed": "images/sample_04/ig_overlay.png"
+      }
+    },
+    {
+      "id": 5,
+      "original_index": 5,
+      "patient_id": "146",
+      "slice_idx": 179,
+      "class_label": 2,
+      "class_name": "Malignant",
+      "malignancy_score": 4,
+      "has_nodule": true,
+      "metrics": {
+        "dice": 0.9167,
+        "iou": 0.8462,
+        "precision": 0.8462,
+        "recall": 1.0,
+        "gt_area": 121,
+        "pred_area": 143,
+        "intersection": 121,
+        "max_confidence": 1.0,
+        "mean_confidence": 0.000543
+      },
+      "has_ig": true,
+      "ig_stats": {
+        "ig_min": -1.629e-05,
+        "ig_max": 1.531e-05,
+        "ig_mean": 0.0,
+        "ig_std": 1.4e-07
+      },
+      "images": {
+        "ct": "images/sample_05/ct.png",
+        "prediction": "images/sample_05/prediction.png",
+        "pred_overlay": "images/sample_05/pred_overlay.png",
+        "gt_overlay": "images/sample_05/gt_overlay.png",
+        "ig_heatmap": "images/sample_05/ig_heatmap.png",
+        "ig_overlay": "images/sample_05/ig_overlay.png",
+        "ig_overlay_zoomed": "images/sample_05/ig_overlay_zoomed.png"
+      }
+    },
+    {
+      "id": 6,
+      "original_index": 6,
+      "patient_id": "358",
+      "slice_idx": 95,
+      "class_label": 2,
+      "class_name": "Malignant",
+      "malignancy_score": 4,
+      "has_nodule": true,
+      "metrics": {
+        "dice": 0.9036,
+        "iou": 0.8241,
+        "precision": 0.9674,
+        "recall": 0.8476,
+        "gt_area": 105,
+        "pred_area": 92,
+        "intersection": 89,
+        "max_confidence": 1.0,
+        "mean_confidence": 0.000352
+      },
+      "has_ig": true,
+      "ig_stats": {
+        "ig_min": -4.457e-05,
+        "ig_max": 2.697e-05,
+        "ig_mean": 0.0,
+        "ig_std": 2.4e-07
+      },
+      "images": {
+        "ct": "images/sample_06/ct.png",
+        "prediction": "images/sample_06/prediction.png",
+        "pred_overlay": "images/sample_06/pred_overlay.png",
+        "gt_overlay": "images/sample_06/gt_overlay.png",
+        "ig_heatmap": "images/sample_06/ig_heatmap.png",
+        "ig_overlay": "images/sample_06/ig_overlay.png",
+        "ig_overlay_zoomed": "images/sample_06/ig_overlay_zoomed.png"
+      }
+    },
+    {
+      "id": 7,
+      "original_index": 7,
+      "patient_id": "287",
+      "slice_idx": 4,
+      "class_label": 0,
+      "class_name": "Normal",
+      "malignancy_score": 0,
+      "has_nodule": false,
+      "metrics": {
+        "dice": 0.0,
+        "iou": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "gt_area": 0,
+        "pred_area": 0,
+        "intersection": 0,
+        "max_confidence": 0.0,
+        "mean_confidence": 0.0
+      },
+      "has_ig": true,
+      "ig_stats": {
+        "ig_min": -0.0,
+        "ig_max": 0.0,
+        "ig_mean": 0.0,
+        "ig_std": 0.0
+      },
+      "images": {
+        "ct": "images/sample_07/ct.png",
+        "prediction": "images/sample_07/prediction.png",
+        "pred_overlay": "images/sample_07/pred_overlay.png",
+        "gt_overlay": "images/sample_07/gt_overlay.png",
+        "ig_heatmap": "images/sample_07/ig_heatmap.png",
+        "ig_overlay": "images/sample_07/ig_overlay.png",
+        "ig_overlay_zoomed": "images/sample_07/ig_overlay.png"
+      }
+    },
+    {
+      "id": 8,
+      "original_index": 8,
+      "patient_id": "126",
+      "slice_idx": 26,
+      "class_label": 0,
+      "class_name": "Normal",
+      "malignancy_score": 0,
+      "has_nodule": false,
+      "metrics": {
+        "dice": 0.0,
+        "iou": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "gt_area": 0,
+        "pred_area": 0,
+        "intersection": 0,
+        "max_confidence": 0.0,
+        "mean_confidence": 0.0
+      },
+      "has_ig": true,
+      "ig_stats": {
+        "ig_min": -0.0,
+        "ig_max": 0.0,
+        "ig_mean": 0.0,
+        "ig_std": 0.0
+      },
+      "images": {
+        "ct": "images/sample_08/ct.png",
+        "prediction": "images/sample_08/prediction.png",
+        "pred_overlay": "images/sample_08/pred_overlay.png",
+        "gt_overlay": "images/sample_08/gt_overlay.png",
+        "ig_heatmap": "images/sample_08/ig_heatmap.png",
+        "ig_overlay": "images/sample_08/ig_overlay.png",
+        "ig_overlay_zoomed": "images/sample_08/ig_overlay.png"
+      }
+    },
+    {
+      "id": 9,
+      "original_index": 9,
+      "patient_id": "358",
+      "slice_idx": 91,
+      "class_label": 2,
+      "class_name": "Malignant",
+      "malignancy_score": 4,
+      "has_nodule": true,
+      "metrics": {
+        "dice": 0.9283,
+        "iou": 0.8662,
+        "precision": 0.8913,
+        "recall": 0.9685,
+        "gt_area": 127,
+        "pred_area": 138,
+        "intersection": 123,
+        "max_confidence": 1.0,
+        "mean_confidence": 0.000527
+      },
+      "has_ig": true,
+      "ig_stats": {
+        "ig_min": -4.47e-06,
+        "ig_max": 1.239e-05,
+        "ig_mean": 0.0,
+        "ig_std": 9e-08
+      },
+      "images": {
+        "ct": "images/sample_09/ct.png",
+        "prediction": "images/sample_09/prediction.png",
+        "pred_overlay": "images/sample_09/pred_overlay.png",
+        "gt_overlay": "images/sample_09/gt_overlay.png",
+        "ig_heatmap": "images/sample_09/ig_heatmap.png",
+        "ig_overlay": "images/sample_09/ig_overlay.png",
+        "ig_overlay_zoomed": "images/sample_09/ig_overlay_zoomed.png"
+      }
+    }
+  ]
+}

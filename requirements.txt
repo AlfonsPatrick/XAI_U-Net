@@ -9,4 +9,4 @@ seaborn
 pydicom
 albumentations
 tf-keras-vis
-sklearn
+scikit-learn

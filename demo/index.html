@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XAI U-Net — Explainable Lung Nodule Segmentation</title>
+    <meta name="description" content="Interactive demo of Attention U-Net with Integrated Gradients for explainable lung nodule segmentation on LIDC-IDRI CT scans.">
+    <meta name="author" content="XAI U-Net Research">
+    <meta name="keywords" content="XAI, U-Net, Explainable AI, Lung Nodule, Segmentation, Integrated Gradients, LIDC-IDRI, Deep Learning, Medical Imaging">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="XAI U-Net — Explainable Lung Nodule Segmentation">
+    <meta property="og:description" content="Interactive demo of Attention U-Net with Integrated Gradients for lung nodule detection.">
+    <meta property="og:type" content="website">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%236366f1'/></svg>">
+</head>
+<body>
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- NAVIGATION                                                         -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <nav id="navbar">
+        <div class="nav-inner">
+            <a href="#hero" class="nav-logo">
+                <span class="logo-text">XAI U-Net</span>
+            </a>
+            <div class="nav-links">
+                <a href="#explorer" class="nav-link">Demo</a>
+                <a href="#methodology" class="nav-link">Methodology</a>
+                <a href="#architecture" class="nav-link">Architecture</a>
+                <a href="https://github.com" target="_blank" rel="noopener" class="nav-link nav-link-github">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                    GitHub
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- HERO SECTION                                                       -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <section id="hero">
+        <div class="hero-bg-grid"></div>
+        <div class="hero-glow"></div>
+        <div class="hero-content">
+            <div class="hero-badge">Research Demo</div>
+            <h1 class="hero-title">
+                <span class="hero-title-line">Explainable AI for</span>
+                <span class="hero-title-line gradient-text">Lung Nodule Segmentation</span>
+            </h1>
+            <p class="hero-subtitle">
+                Attention U-Net with Integrated Gradients (IG) on the LIDC-IDRI dataset.
+                Visualize how the model detects and segments lung nodules — and <em>why</em> it makes each prediction.
+            </p>
+            <div class="hero-stats" id="heroStats">
+                <div class="stat-card">
+                    <span class="stat-value" data-target="100">—</span>
+                    <span class="stat-label">Patients</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value">512×512</span>
+                    <span class="stat-label">Resolution</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" data-target="50">—</span>
+                    <span class="stat-label">IG Steps</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" id="statSamples">—</span>
+                    <span class="stat-label">Test Samples</span>
+                </div>
+            </div>
+            <a href="#explorer" class="hero-cta">
+                Explore Results
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 13l5 5 5-5M7 6l5 5 5-5"/></svg>
+            </a>
+        </div>
+        <div class="scroll-indicator">
+            <div class="scroll-arrow"></div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- SAMPLE EXPLORER                                                    -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <section id="explorer">
+        <div class="section-header">
+            <h2 class="section-title">Sample Explorer</h2>
+            <p class="section-desc">Select a test sample to view the U-Net prediction, ground truth, and Integrated Gradients attribution map.</p>
+        </div>
+
+        <div class="explorer-layout">
+            <!-- Sidebar: Sample List -->
+            <aside class="explorer-sidebar">
+                <div class="filter-tabs" id="filterTabs" style="display: flex; flex-direction: column; gap: 10px;">
+                    <button class="filter-btn active" data-filter="all" style="width: 100%;">All Samples</button>
+                    <div style="display: flex; gap: 5px; width: 100%;">
+                        <button class="filter-btn" data-filter="Normal" style="flex: 1; padding: 8px 4px; font-size: 0.85rem;">
+                            <span class="class-dot dot-normal"></span>Normal
+                        </button>
+                        <button class="filter-btn" data-filter="Benign" style="flex: 1; padding: 8px 4px; font-size: 0.85rem;">
+                            <span class="class-dot dot-benign"></span>Benign
+                        </button>
+                        <button class="filter-btn" data-filter="Malignant" style="flex: 1; padding: 8px 4px; font-size: 0.85rem;">
+                            <span class="class-dot dot-malignant"></span>Malignant
+                        </button>
+                    </div>
+                </div>
+                <div class="sample-list" id="sampleList">
+                    <!-- Populated by JavaScript -->
+                    <div class="loading-placeholder">
+                        <div class="spinner"></div>
+                        <span>Loading samples...</span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main: Analysis Viewer -->
+            <main class="analysis-viewer" id="analysisViewer">
+                <!-- Empty state -->
+                <div class="empty-state" id="emptyState">
+                    <h3>Select a Sample</h3>
+                    <p>Choose a test sample from the sidebar to view its analysis.</p>
+                </div>
+
+                <!-- Analysis content (hidden until a sample is selected) -->
+                <div class="analysis-content" id="analysisContent" style="display: none;">
+                    <!-- Sample info header -->
+                    <div class="analysis-header" id="analysisHeader">
+                        <div class="sample-info-bar">
+                            <span class="sample-badge" id="classBadge">Normal</span>
+                            <span class="sample-detail" id="patientInfo">Patient #—</span>
+                            <span class="sample-detail" id="malignancyInfo">Malignancy: —</span>
+                        </div>
+                        <div id="explanationBox" style="margin-top: 15px; padding: 12px 16px; background: rgba(0,0,0,0.2); border-radius: 8px; border-left: 3px solid var(--accent); color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6;">
+                            <!-- Explanation text will be injected here -->
+                        </div>
+                    </div>
+
+                    <!-- Visualization Grid -->
+                    <div class="viz-grid">
+                        <div class="viz-panel" id="panelCT">
+                            <div class="viz-label">Original CT Scan</div>
+                            <div class="viz-image-wrap">
+                                <img id="imgCT" src="" alt="CT Scan" loading="lazy">
+                            </div>
+                        </div>
+                        <div class="viz-panel" id="panelPredOverlay">
+                            <div class="viz-label">Prediction Overlay</div>
+                            <div class="viz-image-wrap">
+                                <img id="imgPredOverlay" src="" alt="Prediction Overlay" loading="lazy">
+                            </div>
+                        </div>
+                        <div class="viz-panel" id="panelGT">
+                            <div class="viz-label">Ground Truth Overlay</div>
+                            <div class="viz-image-wrap">
+                                <img id="imgGT" src="" alt="Ground Truth" loading="lazy">
+                            </div>
+                        </div>
+                        <div class="viz-panel" id="panelIG">
+                            <div class="viz-label">IG Attribution Map</div>
+                            <div class="viz-image-wrap">
+                                <img id="imgIG" src="" alt="Integrated Gradients" loading="lazy">
+                            </div>
+                        </div>
+                        <div class="viz-panel" id="panelIGOverlay">
+                            <div class="viz-label">IG + CT Overlay</div>
+                            <div class="viz-image-wrap">
+                                <img id="imgIGOverlay" src="" alt="IG Overlay" loading="lazy">
+                            </div>
+                        </div>
+                        <div class="viz-panel" id="panelIGOverlayZoomed">
+                            <div class="viz-label">IG + CT Overlay Zoomed</div>
+                            <div class="viz-image-wrap">
+                                <img id="imgIGOverlayZoomed" src="" alt="IG Overlay Zoomed" loading="lazy">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Metrics Panel -->
+                    <div class="metrics-panel">
+                        <h3 class="metrics-title">Segmentation Metrics</h3>
+                        <div class="metrics-grid">
+                            <div class="metric-item">
+                                <div class="metric-header">
+                                    <span class="metric-name">Dice Coefficient</span>
+                                    <span class="metric-value" id="metricDice">—</span>
+                                </div>
+                                <div class="metric-bar-track">
+                                    <div class="metric-bar metric-bar-dice" id="barDice" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-header">
+                                    <span class="metric-name">IoU (Jaccard)</span>
+                                    <span class="metric-value" id="metricIoU">—</span>
+                                </div>
+                                <div class="metric-bar-track">
+                                    <div class="metric-bar metric-bar-iou" id="barIoU" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-header">
+                                    <span class="metric-name">Precision</span>
+                                    <span class="metric-value" id="metricPrecision">—</span>
+                                </div>
+                                <div class="metric-bar-track">
+                                    <div class="metric-bar metric-bar-precision" id="barPrecision" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-header">
+                                    <span class="metric-name">Recall</span>
+                                    <span class="metric-value" id="metricRecall">—</span>
+                                </div>
+                                <div class="metric-bar-track">
+                                    <div class="metric-bar metric-bar-recall" id="barRecall" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="metrics-extra" id="metricsExtra">
+                            <span>GT Area: <strong id="metricGTArea">—</strong> px</span>
+                            <span>Pred Area: <strong id="metricPredArea">—</strong> px</span>
+                            <span>Max Conf: <strong id="metricMaxConf">—</strong></span>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- METHODOLOGY                                                        -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <section id="methodology" style="padding: 6rem 5%; background-color: var(--bg-main);">
+        <div class="section-header">
+            <h2 class="section-title">Methodology</h2>
+            <p class="section-desc">How Integrated Gradients explains the model's predictions</p>
+        </div>
+
+        <div class="methodology-grid" style="grid-template-columns: 1fr 1fr; gap: 2rem;">
+            <div class="method-card">
+                <h3>1. Interpolation Path</h3>
+                <p>Create a series of interpolated images between a <strong>baseline</strong> (black image) and the <strong>input</strong> CT scan, parameterized by α ∈ [0, 1].</p>
+                <div class="formula-block">
+                    x<sub>α</sub> = x' + α · (x − x')
+                </div>
+            </div>
+            <div class="method-card">
+                <h3>2. Gradient Computation</h3>
+                <p>At each interpolation step, compute the <strong>gradient</strong> of the model's output with respect to the input image.</p>
+                <div class="formula-block">
+                    ∂F(x<sub>α</sub>) / ∂x<sub>i</sub>
+                </div>
+            </div>
+            <div class="method-card">
+                <h3>3. Path Integration</h3>
+                <p>Approximate the <strong>integral</strong> of these gradients using a Riemann sum (average of gradients across all steps).</p>
+                <div class="formula-block">
+                    IG<sub>i</sub>(x) = (x<sub>i</sub> − x'<sub>i</sub>) × <span class="integral">∫<sub>0</sub><sup>1</sup></span> ∂F(x<sub>α</sub>)/∂x<sub>i</sub> dα
+                </div>
+            </div>
+            <div class="method-card">
+                <h3>4. Attribution Map</h3>
+                <p>The resulting map shows each pixel's <strong>contribution</strong> to the prediction. <span class="text-red">Red</span> = positive attribution, <span class="text-blue">Blue</span> = negative attribution.</p>
+            </div>
+        </div>
+
+        <div class="method-highlight" style="margin-top: 3rem;">
+            <h3 style="margin-bottom: 1.5rem; text-align: center;">Why Integrated Gradients?</h3>
+            <p style="color: var(--text-secondary); line-height: 1.6; text-align: center; max-width: 900px; margin: 0 auto 2rem auto;">
+                Unlike traditional visualization methods like Grad-CAM that suffer from poor resolution and gradient saturation, Integrated Gradients provides pixel-perfect attribution. By integrating gradients along a path from a baseline, it guarantees that any feature contributing to the model's output receives an exact importance score, making it highly robust for medical imaging where tiny details matter.
+            </p>
+            <div class="highlight-items" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
+                <div class="highlight-item" style="background: var(--bg-secondary); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border);">
+                    <strong style="color: var(--text-main); font-size: 1.1rem; display: block; margin-bottom: 0.5rem;">Sensitivity</strong>
+                    <span style="color: var(--text-muted); font-size: 0.9rem;">If a feature changes the prediction, it gets non-zero attribution. This ensures no crucial finding is ignored by the explainer.</span>
+                </div>
+                <div class="highlight-item" style="background: var(--bg-secondary); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border);">
+                    <strong style="color: var(--text-main); font-size: 1.1rem; display: block; margin-bottom: 0.5rem;">Implementation Invariance</strong>
+                    <span style="color: var(--text-muted); font-size: 0.9rem;">Two functionally equivalent models always give identical attributions, providing a highly reliable and consistent explanation.</span>
+                </div>
+                <div class="highlight-item" style="background: var(--bg-secondary); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border);">
+                    <strong style="color: var(--text-main); font-size: 1.1rem; display: block; margin-bottom: 0.5rem;">Completeness</strong>
+                    <span style="color: var(--text-muted); font-size: 0.9rem;">Attributions sum perfectly to the difference between the input and baseline predictions, ensuring mathematical accountability.</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- MODEL PERFORMANCE                                                  -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <section id="performance" style="padding: 6rem 5%; background-color: var(--bg-alt);">
+        <div class="section-header">
+            <h2 class="section-title">Model Performance & Results</h2>
+            <p class="section-desc">Training history and sample predictions across validation data</p>
+        </div>
+        
+        <div class="methodology-grid" style="grid-template-columns: 1fr; gap: 4rem; max-width: 1200px; margin: 0 auto;">
+            
+            <!-- Sample Predictions Row -->
+            <div class="method-card" style="padding: 2rem; display: flex; flex-direction: column;">
+                <h3 style="margin-bottom: 1.5rem; text-align: center; font-size: 1.5rem;">Sample Predictions</h3>
+                <div style="flex: 1; display: flex; align-items: center; justify-content: center; margin-bottom: 2rem;">
+                    <img src="assets/sample_predictions_full.png" alt="Sample Predictions" style="width: 100%; max-height: 800px; object-fit: contain; border-radius: 8px;">
+                </div>
+                <div style="color: var(--text-secondary); line-height: 1.7; text-align: justify; font-size: 0.95rem;">
+                    <p style="margin-bottom: 1rem;">This sample presents predictions across all three categories — Normal, Malignant, and Benign — giving a reasonably complete picture of the model's behavior.</p>
+                    <p style="margin-bottom: 1rem;"><strong>Normal cases</strong> (columns 1, 3, 6) are handled well by the model. The original CT slices in these cases show varying anatomical levels, with some appearing more abdominal in nature rather than classic lung window views. All three ground truth masks are empty, correctly reflecting the absence of any nodule. The model's predicted masks are also completely black across all Normal cases, indicating the model produces no false positives in this category. This suggests good specificity and that the model is not prone to hallucinating nodules where none exist.</p>
+                    <p style="margin-bottom: 1rem;"><strong>Malignant cases</strong> (columns 2 and 4) demonstrate the model's strongest performance. In column 4, a large and irregularly shaped malignant nodule is clearly annotated in the ground truth, and the predicted mask reproduces its shape, size, and location with high accuracy. Column 2 presents a smaller malignant nodule, which the model still successfully detects, though the predicted region appears marginally smaller than the ground truth annotation. Overall, the model shows reliable sensitivity and spatial accuracy for malignant nodule segmentation.</p>
+                    <p style="margin-bottom: 1rem;"><strong>Benign cases</strong> (column 5) reveal a clear weakness. The ground truth mask shows two very small, faint nodule specks — characteristic of benign lesions which tend to be smaller and lower in contrast. The predicted mask shows only partial detection at best, with faint dots that may or may not correspond precisely to the ground truth locations. This suggests the model struggles with benign nodules, likely due to their subtle appearance and potentially insufficient representation during training.</p>
+                    <p>Overall, the model performs well on Normal and Malignant categories but shows inconsistency on Benign cases. Improving benign detection should be the primary focus going forward, as missing small benign nodules carries real clinical risk.</p>
+                </div>
+            </div>
+
+            <!-- Training History Row -->
+            <div class="method-card" style="padding: 2rem; display: flex; flex-direction: column;">
+                <h3 style="margin-bottom: 1.5rem; text-align: center; font-size: 1.5rem;">Training History</h3>
+                <div style="flex: 1; display: flex; align-items: center; justify-content: center; margin-bottom: 2rem;">
+                    <img src="assets/unet_training_history.png" alt="Training History" style="width: 100%; max-height: 500px; object-fit: contain; border-radius: 8px;">
+                </div>
+                <div style="color: var(--text-secondary); line-height: 1.7; text-align: justify; font-size: 0.95rem;">
+                    <p style="margin-bottom: 1rem;">The training history spans approximately <strong>160 epochs</strong> with the following observations across key metrics.</p>
+                    <p style="margin-bottom: 1rem;"><strong>Training Dice Coefficient & Loss</strong> show a steep and healthy improvement in the early phase. The dice coefficient jumped from near zero (~0.004) at epoch 1 to around 0.60 by epoch 30, with the dice loss dropping correspondingly from ~0.996 to ~0.40. This indicates the model learned the core segmentation task quickly in the first phase. Beyond epoch 30, progress continued but at a slower pace, eventually plateauing in the 0.73–0.76 range with noticeable oscillation in later epochs, suggesting the model had largely converged but was still fluctuating rather than cleanly settling.</p>
+                    <p style="margin-bottom: 1rem;"><strong>IoU</strong> followed the same trend — starting near zero and climbing to roughly 0.57–0.60 in later epochs — consistent with the dice score behavior, confirming that spatial overlap quality improved steadily before leveling off.</p>
+                    <p style="margin-bottom: 1rem;"><strong>Validation Recall</strong> shows an interesting anomaly: it opened at 0.78 in epoch 1, then sharply crashed to 0.065 in epoch 2 before gradually recovering. This initial spike is likely a coincidental result from random weight initialization rather than true learning. After recovering, recall climbed steadily and plateaued around <strong>0.67–0.68</strong> in the final epochs, meaning the model correctly detects roughly two-thirds of true positive nodule regions.</p>
+                    <p style="margin-bottom: 1rem;"><strong>Learning Rate Schedule</strong> reveals an aggressive halving strategy — starting at 5×10⁻⁴ and repeatedly halving down to a floor of 1×10⁻⁷ by the final epochs. While this helped stabilize training, the learning rate became effectively negligible in the last 20–30 epochs, meaning the model stopped meaningfully learning. This aggressive decay likely locked the model into a local optimum before it could fully resolve the benign class detection weakness.</p>
+                    <p>Overall, training was <strong>stable and progressed well</strong>, but the combination of an overly aggressive learning rate decay and class imbalance appears to have caused the model to converge prematurely to a malignant-biased solution.</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- ARCHITECTURE                                                       -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <section id="architecture" style="padding: 6rem 5%; background-color: var(--bg-main);">
+        <div class="section-header">
+            <h2 class="section-title">Model Architecture</h2>
+            <p class="section-desc">Attention U-Net with Focal Tversky Loss</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: stretch; max-width: 1200px; margin: 0 auto;">
+            
+            <!-- Architecture Panel -->
+            <div style="display: flex; flex-direction: column;">
+                <h3 style="font-size: 1.25rem; color: var(--text-main); margin-bottom: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">Attention U-Net Structure</h3>
+                <div class="detail-card" style="flex: 1; margin: 0; padding: 20px; display: flex; flex-direction: column; justify-content: space-between;">
+                    <img src="assets/unet.png" alt="Attention U-Net Architecture" style="width: 100%; object-fit: contain; border-radius: 8px; margin-bottom: 20px; background: white; max-height: 250px;">
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; text-align: justify; margin: 0;">
+                        <strong>U-Net</strong> is a Convolutional Neural Network (CNN) architecture specifically designed for biomedical image segmentation. Its distinctive U-shape consists of a contracting path to capture context, and a symmetric expansive path to enable precise localization.<br><br>
+                        <strong>Attention U-Net</strong> integrates Attention Gates (AGs) into the skip connections. These gates allow the model to automatically learn to focus on target structures of varying shapes and sizes, while suppressing feature responses in irrelevant regions, ensuring the model implicitly learns where to "look" without requiring external organ localization modules.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Config Panel -->
+            <div style="display: flex; flex-direction: column;">
+                <h3 style="font-size: 1.25rem; color: var(--text-main); margin-bottom: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">Training Configuration</h3>
+                <div class="detail-card" style="flex: 1; margin: 0; padding: 20px;">
+                    <ul class="detail-list" style="grid-template-columns: 1fr;">
+                        <li><span>Loss Function</span><strong>Focal Tversky (α=0.4, β=0.6)</strong></li>
+                        <li><span>Optimizer</span><strong>Adam (lr=5×10⁻⁴)</strong></li>
+                        <li><span>Epochs</span><strong>160 (early stopping)</strong></li>
+                        <li><span>Batch Size</span><strong>8</strong></li>
+                        <li><span>Dropout</span><strong>0.5</strong></li>
+                        <li><span>Regularization</span><strong>L2 (1×10⁻⁵)</strong></li>
+                        <li><span>Threshold</span><strong>0.4 (segmentation)</strong></li>
+                        <li><span>Post-processing</span><strong>Remove small objects (&lt;100px)</strong></li>
+                    </ul>
+                    <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid var(--border); color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5; text-align: justify;">
+                        <strong>Focal Tversky Loss</strong> is specifically designed to address severe class imbalance in medical image segmentation. By adjusting α and β, it prioritizes the minority positive class (nodules) over the overwhelming background, forcing the model to focus on hard-to-detect lesions.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- ISSUES FOUND (STUDY CASES)                                         -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <section id="issues" style="padding: 6rem 5%; background-color: var(--bg-alt);">
+        <div class="section-header">
+            <h2 class="section-title">Study Cases</h2>
+            <p class="section-desc">Analysis of model limitations and anomalies discovered using Integrated Gradients</p>
+        </div>
+        
+        <!-- Case 1 -->
+        <div class="issue-block" style="max-width: 1200px; margin: 0 auto 4rem auto; display: flex; flex-direction: column; gap: 20px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: stretch;">
+                <div style="display: flex; flex-direction: column; justify-content: center;">
+                    <h3 style="font-size: 1.5rem; color: var(--text-main); margin-bottom: 1rem;">Study Case 1</h3>
+                    <p style="color: var(--text-muted); line-height: 1.7; margin-bottom: 1.5rem; text-align: justify;">This is a critical case study that highlights the irreplaceable role of XAI. Metrically, the model's performance on this case is very impressive. The resulting segmentation is highly accurate and nearly identical to the ground truth, achieving a Dice Score of 0.91. Based on this number alone, the prediction would be considered an absolute success.</p>
+                    <p style="color: var(--text-muted); line-height: 1.7; margin-bottom: 1.5rem; text-align: justify;">However, investigation using IG reveals a concerning reasoning anomaly. The attribution map shows that the highest positive importance score is not centered on the nodule mass, but rather on adjacent structures. This finding proves that the model has learned a shortcut and relies on spurious correlations to produce the correct prediction for the wrong reason.</p>
+                    <p style="color: var(--text-muted); line-height: 1.7; margin-bottom: 0; text-align: justify;">Anomalies like this are impossible to detect with quantitative metrics and are clear evidence of the danger of relying solely on numbers for medical model validation. It shows that the model might be unreliable in similar cases where the nodule is not adjacent to other structures such as blood vessels.</p>
+                </div>
+                <div style="display: flex; flex-direction: column; justify-content: center; gap: 1rem; height: 100%;">
+                    <div style="flex: 1; text-align: center; display: flex; flex-direction: column;"><img src="assets/issues/4-3-2/255-1.png" style="width:80%; margin: 0 auto; display: block; height: 100%; object-fit: contain; border-radius: 8px;"><small style="color:var(--text-muted); margin-top: 0.5rem; display:block; font-weight: bold;">Study Case 1-1</small></div>
+                    <div style="flex: 1; text-align: center; display: flex; flex-direction: column;"><img src="assets/issues/4-3-2/255-2.png" style="width:80%; margin: 0 auto; display: block; height: 100%; object-fit: contain; border-radius: 8px;"><small style="color:var(--text-muted); margin-top: 0.5rem; display:block; font-weight: bold;">Study Case 1-2</small></div>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <img src="assets/issues/4-3-2/255-2 - zoomed.png" style="width: 300px; height: 300px; margin: 0 auto; border-radius: 8px; display: block;">
+                <small style="color:var(--text-muted); margin-top: 0.5rem; display:block; font-weight: bold;">Study Case 1-3</small>
+            </div>
+        </div>
+
+        <hr style="border-color: var(--border); margin: 4rem auto; max-width: 1200px;">
+
+        <!-- Case 2 -->
+        <div class="issue-block" style="max-width: 1200px; margin: 0 auto 4rem auto;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: stretch;">
+                <div style="display: flex; flex-direction: column; justify-content: center;">
+                    <h3 style="font-size: 1.5rem; color: var(--text-main); margin-bottom: 1rem;">Study Case 2</h3>
+                    <p style="color: var(--text-muted); line-height: 1.7; margin-bottom: 1.5rem; text-align: justify;">XAI analysis is also important to validate the model's specificity, i.e., its ability to ignore irrelevant areas. This case displays an area of healthy lung tissue without any nodules.</p>
+                    <p style="color: var(--text-muted); line-height: 1.7; margin-bottom: 0; text-align: justify;">As seen in the images, the model correctly did not produce segmentation in that area. The generated attribution map is also completely empty. This transparently confirms that the model does not hallucinate or find spurious features when there are no relevant targets. It is strong evidence that the model specifically looks for features associated with nodules and remains silent if those features are absent.</p>
+                </div>
+                <div style="display: flex; flex-direction: column; justify-content: center; gap: 1rem; height: 100%;">
+                    <div style="flex: 1; text-align: center; display: flex; flex-direction: column;"><img src="assets/issues/4-3-3/90-1.png" style="width:80%; margin: 0 auto; display: block; height: 100%; object-fit: contain; border-radius: 8px;"><small style="color:var(--text-muted); margin-top: 0.5rem; display:block; font-weight: bold;">Study Case 2-1</small></div>
+                    <div style="flex: 1; text-align: center; display: flex; flex-direction: column;"><img src="assets/issues/4-3-3/90-2.png" style="width:80%; margin: 0 auto; display: block; height: 100%; object-fit: contain; border-radius: 8px;"><small style="color:var(--text-muted); margin-top: 0.5rem; display:block; font-weight: bold;">Study Case 2-2</small></div>
+                </div>
+            </div>
+        </div>
+
+        <hr style="border-color: var(--border); margin: 4rem auto; max-width: 1200px;">
+
+        <!-- Case 3 -->
+        <div class="issue-block" style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: stretch;">
+                <div style="display: flex; flex-direction: column; justify-content: center;">
+                    <h3 style="font-size: 1.5rem; color: var(--text-main); margin-bottom: 1rem;">Study Case 3</h3>
+                    <p style="color: var(--text-muted); line-height: 1.7; margin-bottom: 1.5rem; text-align: justify;">This final case tests how XAI can provide transparency into the model's limitations and failures. In this case, there is a small nodule present in the ground truth, but the model failed to detect it. The model did not produce a segmentation mask for the nodule, only masks following the body and lung boundaries.</p>
+                    <p style="color: var(--text-muted); line-height: 1.7; margin-bottom: 1.5rem; text-align: justify;">Analysis using Integrated Gradients (IG) provides deep insights into this failure. The generated attribution map shows that the model did indeed score some pixels as important features, but in completely incorrect locations. The positive attribution produced by the model does not correlate with the actual nodule location, but rather resides on another lesion.</p>
+                    <p style="color: var(--text-muted); line-height: 1.7; margin-bottom: 0; text-align: justify;">This finding is crucial because it shows the model is easily distracted by ambiguous features like random noise and contrasting anatomical boundaries. It can be concluded that in this case, the model didn't just fail, but made the wrong decision for the wrong reason. This clearly indicates the model is less reliable in detecting nodules adjacent to the lung wall, a specific weakness that would remain hidden without XAI analysis.</p>
+                </div>
+                <div style="display: flex; flex-direction: column; justify-content: center; gap: 1rem; height: 100%;">
+                    <div style="flex: 1; text-align: center; display: flex; flex-direction: column;"><img src="assets/issues/4-3-4/100-1.png" style="width:80%; margin: 0 auto; display: block; height: 100%; object-fit: contain; border-radius: 8px;"><small style="color:var(--text-muted); margin-top: 0.5rem; display:block; font-weight: bold;">Study Case 3-1</small></div>
+                    <div style="flex: 1; text-align: center; display: flex; flex-direction: column;"><img src="assets/issues/4-3-4/100-2.png" style="width:80%; margin: 0 auto; display: block; height: 100%; object-fit: contain; border-radius: 8px;"><small style="color:var(--text-muted); margin-top: 0.5rem; display:block; font-weight: bold;">Study Case 3-2</small></div>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <img src="assets/issues/4-3-4/100-2 - zoomed.png" style="width: 300px; height: 300px; margin: 0 auto; border-radius: 8px; display: block;">
+                <small style="color:var(--text-muted); margin-top: 0.5rem; display:block; font-weight: bold;">Study Case 3-3</small>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- REFERENCES                                                         -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <section id="references" style="padding: 6rem 5%; background-color: var(--bg-main);">
+        <div class="section-header">
+            <h2 class="section-title">Key references</h2>
+            <p class="section-desc">Citations and bibliography</p>
+        </div>
+        <div style="max-width: 1000px; margin: 0 auto;">
+            <details style="background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 15px 20px; cursor: pointer;">
+                <summary style="font-weight: bold; font-size: 1.1rem; color: var(--text-main); outline: none;">View Full Reference List</summary>
+                <div style="margin-top: 20px; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6; max-height: 400px; overflow-y: auto; padding-right: 15px;">
+                    <ol style="padding-left: 20px; margin: 0;">
+                        <li style="margin-bottom: 10px;">S. G. Armato III, G. McLennan, L. Bidaut, and et al., “Data from lidc-idri,” The Cancer Imaging Archive, 2015, accessed: 2025-09-17. [Online]. Available: https://doi.org/10.7937/K9/TCIA.2015.LO9QL9SX</li>
+                        <li style="margin-bottom: 10px;">A. Ye, “Lidc-idri,” https://www.kaggle.com/datasets/washingtongold/lidcidri30, 2020, accessed: 2025-09-17</li>
+                        <li style="margin-bottom: 10px;">A. Kebaili, J. Lapuyade-Lahorgue, and S. Ruan, “Deep learning approaches for data augmentation in medical imaging: A review,” Journal of Imaging, vol. 9, p. 81, 2023</li>
+                        <li style="margin-bottom: 10px;">Y. Gao, F. Song, P. Zhang, J. Liu, J. Cui, Y. Ma, G. Zhang, and J. Luo, “Improving the subtype classification of non-small cell lung cancer by elastic deformation based machine learning,” Journal of Digital Imaging, vol. 34, no. 3, pp. 605–617, 2021.</li>
+                        <li style="margin-bottom: 10px;">O. Ronneberger, P. Fischer, and T. Brox, “U-net: Convolutional networks for biomedical image segmentation,” 2015. [Online]. Available: https://arxiv.org/abs/ 1505.04597</li>
+                        <li style="margin-bottom: 10px;">O. Oktay, J. Schlemper, L. L. Folgoc, M. Lee, M. Heinrich, K. Misawa, K. Mori, S. McDonagh, N. Y. Hammerla, B. Kainz, B. Glocker, and D. Rueckert, “Attention u-net: Learning where to look for the pancreas,” 2018. [Online]. Available: https://arxiv.org/abs/1804.03999</li>
+                        <li style="margin-bottom: 10px;">M. Sundararajan, A. Taly, and Q. Yan, “Axiomatic attribution for deep networks,” in Proceedings of the 34th International Conference on Machine Learning (ICML), 2017, pp. 3319–3328.</li>
+                        <li style="margin-bottom: 10px;">Y. Zhuo and Z. Ge, “Ig2: Integrated gradient on iterative gradient path for feature attribution,” IEEE Transactions on Pattern Analysis and Machine Intelligence, vol. 46, no. 11, pp. 7173–7190, 2024.</li>
+                    </ol>
+                </div>
+            </details>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- FOOTER                                                             -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <footer id="footer">
+        <div class="footer-content">
+            <div class="footer-main">
+                <span class="footer-logo">XAI U-Net</span>
+                <p>Explainable AI for Lung Nodule Segmentation</p>
+                <p class="footer-tech">Built with TensorFlow · LIDC-IDRI Dataset · Integrated Gradients</p>
+            </div>
+            <div class="footer-links">
+                <a href="https://wiki.cancerimagingarchive.net/display/Public/LIDC-IDRI" target="_blank" rel="noopener">LIDC-IDRI Dataset</a>
+                <a href="https://arxiv.org/abs/1703.01365" target="_blank" rel="noopener">IG Paper (Sundararajan et al.)</a>
+                <a href="https://arxiv.org/abs/1804.03999" target="_blank" rel="noopener">Attention U-Net Paper</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>Alfons Patrick M - 2026</span>
+        </div>
+    </footer>
+
+    <!-- Image Lightbox Modal -->
+    <div class="lightbox" id="lightbox">
+        <button class="lightbox-close" id="lightboxClose">&times;</button>
+        <div class="lightbox-content">
+            <img id="lightboxImg" src="" alt="Enlarged view">
+            <p class="lightbox-caption" id="lightboxCaption"></p>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

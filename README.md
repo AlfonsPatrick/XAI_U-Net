@@ -34,3 +34,14 @@ The primary goal of this repository is not only to achieve high-performance segm
 - pydicom
 - albumentations
 - tf-keras-vis
+
+## References
+
+1. S. G. Armato III, G. McLennan, L. Bidaut, and et al., “Data from lidc-idri,” The Cancer Imaging Archive, 2015, accessed: 2025-09-17. [Online]. Available: https://doi.org/10.7937/K9/TCIA.2015.LO9QL9SX
+2. A. Ye, “Lidc-idri,” https://www.kaggle.com/datasets/washingtongold/lidcidri30, 2020, accessed: 2025-09-17
+3. A. Kebaili, J. Lapuyade-Lahorgue, and S. Ruan, “Deep learning approaches for data augmentation in medical imaging: A review,” Journal of Imaging, vol. 9, p. 81, 2023
+4. Y. Gao, F. Song, P. Zhang, J. Liu, J. Cui, Y. Ma, G. Zhang, and J. Luo, “Improving the subtype classification of non-small cell lung cancer by elastic deformation based machine learning,” Journal of Digital Imaging, vol. 34, no. 3, pp. 605–617, 2021.
+5. O. Ronneberger, P. Fischer, and T. Brox, “U-net: Convolutional networks for biomedical image segmentation,” 2015. [Online]. Available: https://arxiv.org/abs/1505.04597
+6. O. Oktay, J. Schlemper, L. L. Folgoc, M. Lee, M. Heinrich, K. Misawa, K. Mori, S. McDonagh, N. Y. Hammerla, B. Kainz, B. Glocker, and D. Rueckert, “Attention u-net: Learning where to look for the pancreas,” 2018. [Online]. Available: https://arxiv.org/abs/1804.03999
+7. M. Sundararajan, A. Taly, and Q. Yan, “Axiomatic attribution for deep networks,” in Proceedings of the 34th International Conference on Machine Learning (ICML), 2017, pp. 3319–3328.
+8. Y. Zhuo and Z. Ge, “Ig2: Integrated gradient on iterative gradient path for feature attribution,” IEEE Transactions on Pattern Analysis and Machine Intelligence, vol. 46, no. 11, pp. 7173–7190, 2024.
