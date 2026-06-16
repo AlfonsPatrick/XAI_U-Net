@@ -23,7 +23,7 @@ print("Standalone Integrated Gradients - All imports completed")
 class Config:
     """Configuration parameters for integrated gradients analysis"""
     DATA_DIR = "/workspace/storage/lidc_dataset"
-    OUTPUT_DIR = "/workspace/output_naskah"
+    OUTPUT_DIR = "workspace/output"
     
     IMAGE_SIZE = (512, 512)
     HU_MIN = -1000
@@ -214,7 +214,7 @@ def load_unet_model():
     Returns:
         Loaded model or None if loading fails
     """
-    model_path = "/workspace/output_naskah/models/best_unet_model.h5"
+    model_path = "workspace/output/models/best_unet_model.h5"
     
     # Define placeholder functions for custom metrics and losses
     custom_objects = {
@@ -617,7 +617,7 @@ def main():
     
     if unet_model is None:
         print("Cannot proceed without a trained model")
-        print("Please ensure your model is saved at: /workspace/output_naskah/models/best_unet_model.h5")
+        print("Please ensure your model is saved at: workspace/output/models/best_unet_model.h5")
         return
     
     print("\n" + "="*60)

@@ -39,7 +39,6 @@ from skimage.measure import regionprops, label
 from skimage.feature import graycomatrix, graycoprops
 from scipy.stats import skew, kurtosis
 from skimage.morphology import remove_small_objects
-import shap
 
 # XML and file handling
 import xml.etree.ElementTree as ET
@@ -55,7 +54,7 @@ import pickle
 # TensorFlow/Keras imports
 import tensorflow as tf
 
-# SHAP and visualization
+# visualization
 from tf_keras_vis.activation_maximization import ActivationMaximization
 from tf_keras_vis.utils.callbacks import Print
 import albumentations as A
@@ -654,6 +653,12 @@ def main():
     
     print(f"Successfully loaded data for {len(patient_data_list)} patients")
     
+    if len(patient_data_list) == 0:
+        raise ValueError(
+            f"No patient data could be loaded. Please ensure your LIDC-IDRI dataset "
+            f"is located at '{Config.DATA_DIR}' and follows the correct folder structure."
+        )
+
     # Extract balanced dataset with metadata
     print("Extracting balanced dataset with metadata...")
     images, masks, labels, metadata = extract_balanced_dataset_with_metadata(patient_data_list)
@@ -779,7 +784,7 @@ def main():
     
     # Compile model
     unet_model.compile(
-        optimizer=tf.keras.optimizers.Adam(learning_rate=lr_schedule),
+        optimizer=tf.keras.optimizers.Adam(learning_rate=initial_learning_rate),
         loss=focal_tversky_loss,
         metrics=[dice_coefficient, dice_loss, iou, 
                 tf.keras.metrics.Precision(), tf.keras.metrics.Recall()]
